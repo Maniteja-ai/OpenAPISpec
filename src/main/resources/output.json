@@ -1,0 +1,1 @@
+{"mani":{"type":"Group","children":[{"POST  \/CreateUser":{"type":"API","children":[{},{},{},{},{},{}]}},{"GET  \/GetUserList":{"type":"API","children":[{},{},{},{},{},{}]}}]}}
