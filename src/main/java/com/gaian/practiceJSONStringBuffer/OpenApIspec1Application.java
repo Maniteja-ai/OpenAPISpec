@@ -16,7 +16,7 @@ public class OpenApIspec1Application{
 
 	public static void main(String[] args)  throws IOException, JSONException  {
 		
-		BufferedReader br=new BufferedReader(new FileReader("C:\\Users\\manit\\Documents\\workspace-spring-tool-suite-4-4.17.2.RELEASE\\openAPIspec-1\\src\\main\\resources\\demo.json"));
+		BufferedReader br=new BufferedReader(new FileReader("/home/gaian/Desktop/OpenAPITask/OpenAPISpec/src/main/resources/demo.json"));
 		SpringApplication.run(OpenApIspec1Application.class, args);
 		String line;
 		StringBuilder sbuilderObj = new StringBuilder();
@@ -38,7 +38,7 @@ public class OpenApIspec1Application{
 		
 	}
 
-	private static JSONObject createFolder(JSONObject inputJsonObj) throws JSONException {
+	private static  JSONObject createFolder(JSONObject inputJsonObj) throws JSONException {
 		// TODO Auto-generated method stub
 		JSONObject folder = new JSONObject();
 		folder.put("type", "Group");
@@ -84,30 +84,107 @@ public class OpenApIspec1Application{
 		return api;
 	}
 	
-	private static Object createApiPropertiesWithChild(JSONObject inputJsonObject,int i) throws JSONException {
+	private static  Object createApiPropertiesWithChild(JSONObject inputJsonObject,int i) throws JSONException {
 		// TODO Auto-generated method stub
 		JSONObject apiProp = new JSONObject();
 		apiProp.put("type", "Group");
 		apiProp.put("link", JSONObject.NULL);
 		apiProp.put("comment", JSONObject.NULL);
+		JSONObject apiPropChild = new JSONObject();
 		switch(i) {
-		case 1:
-			JSONArray arr = inputJsonObject.getJSONObject("response").getJSONArray("header");
-			if(arr.lenght()!=0) {
-				for(int i=0; i<)
+		  case 1:
+      		JSONArray arr = inputJsonObject.getJSONObject("request").getJSONArray("header");
+//     		JSONArray arr = res.getJSONArray(0);
+			if(arr.length()!=0) {
+				for(int j=0; j<arr.length(); j++) {
+					JSONObject response = arr.getJSONObject(j);
+					String key = response.getString("key");
+					String value = response.getString("value");
+					String dataType="STRING";
+					String comment = response.optString("description");
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put(key, createPropertyObject(comment,dataType,value,false,false));
+					
+				}
 			}
-		}
-		
-		
+			apiProp.put("children", apiPropChild);
+			return apiProp;
+		  case 2:
+			  //Req-Body
+			  JSONObject reqBody = inputJsonObject.getJSONObject("request").getJSONObject("body");
+			  if(reqBody.has("key")) {
+				  
+			  }
+			  return apiPropChild;
+		  case 3:
+			  
+			  //Res-Body
+			  
+			  return apiPropChild;
+		  case 4:
+			  JSONArray pathParams = inputJsonObject.getJSONObject("request").getJSONObject("url").getJSONArray("path");
+			  
+			  if(pathParams.length()!=0) {
+				  for(int j=0; j<pathParams.length(); j++) {
+					  String path = pathParams.getString(i);
+			          String comment="";
+			          String dataType="STRING";
+			          String value="needToChange";
+					  apiPropChild.put(path,createPropertyObject(comment,dataType,value,false,false));
+					  
+				  }
+			  }
+			  
+			  apiProp.put("children", apiPropChild);
+			  return apiProp;
+		    default :
+		    	apiProp.put("children", apiPropChild);
+				 return apiProp;	  
+			   
+		} 
+
 		return null;
+	}
+	
+
+
+	private static  Object createApiPropertiesWithoutChild(JSONObject inputJsonObject,int i) throws JSONException {
+		// TODO Auto-generated methws JSOod stub
+		JSONObject httpsObj = new JSONObject();
+		JSONObject req = new JSONObject();
+		switch(i) {
+		    case 4 :
+		    	String commentMethod = req.has("description")?req.getString("description"):"";
+		    	String dataTypeMethod = "STRING";
+		    	String valueMethod = req.getString("method");
+		    	return createPropertyObject(commentMethod,dataTypeMethod,valueMethod,false,false);
+		    case 5:
+		    	String commentUrl = req.has("description")?req.getString("description"):"";
+		    	String dataTypeUrl = "STRING";
+		    	String valueUrl = req.getString("url");
+		    	return createPropertyObject(commentUrl,dataTypeUrl,valueUrl,false,false);
+		    default :
+		    	return httpsObj;
+		    	
+		
+		}
+			
+	}
+	
+	private static Object createPropertyObject(String comment, String dataType, String value, boolean mandatory, boolean madificationAllowed) throws JSONException {
+		// TODO Auto-generated method stub
+		JSONObject req = new JSONObject();
+		req.put("comment", comment.equals("")?JSONObject.NULL:comment);
+		req.put(dataType, dataType);
+		req.put("value", value);
+		req.put("mandatory", mandatory);
+		req.put("modificationAllowed", madificationAllowed);
+		return req;
 	}
 
-	private static Object createApiPropertiesWithoutChild(JSONObject inputJsonObject,int i) {
-		// TODO Auto-generated method stub
-		
-		
-		return null;
-	}
+
+
+
 
 
 
